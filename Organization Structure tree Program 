@@ -1,0 +1,191 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Employee Node Structure
+class Employee {
+public:
+    int empID;
+    string name;
+    string designation;
+    vector<Employee*> subordinates;
+
+    // Constructor
+    Employee(int id, string empName, string role) {
+        empID = id;
+        name = empName;
+        designation = role;
+    }
+
+    // Add Subordinate
+    void addSubordinate(Employee* emp) {
+        subordinates.push_back(emp);
+    }
+};
+
+// Function to Display Organization Tree
+void displayOrganization(Employee* root, int level = 0) {
+
+    for(int i = 0; i < level; i++) {
+        cout << "    ";
+    }
+
+    cout << "Employee ID : " << root->empID << endl;
+
+    for(int i = 0; i < level; i++) {
+        cout << "    ";
+    }
+
+    cout << "Employee Name : " << root->name << endl;
+
+    for(int i = 0; i < level; i++) {
+        cout << "    ";
+    }
+
+    cout << "Designation : " << root->designation << endl;
+
+    for(int i = 0; i < level; i++) {
+        cout << "    ";
+    }
+
+    cout << "----------------------------------" << endl;
+
+    // Recursive Traversal
+    for(Employee* emp : root->subordinates) {
+        displayOrganization(emp, level + 1);
+    }
+}
+
+// Function to Count Employees
+int countEmployees(Employee* root) {
+
+    int count = 1;
+
+    for(Employee* emp : root->subordinates) {
+        count += countEmployees(emp);
+    }
+
+    return count;
+}
+
+// Function to Search Employee
+void searchEmployee(Employee* root, string searchName) {
+
+    if(root->name == searchName) {
+        cout << "\nEmployee Found\n";
+        cout << "ID : " << root->empID << endl;
+        cout << "Name : " << root->name << endl;
+        cout << "Designation : " << root->designation << endl;
+    }
+
+    for(Employee* emp : root->subordinates) {
+        searchEmployee(emp, searchName);
+    }
+}
+
+int main() {
+
+    // Root Node
+    Employee* CEO = new Employee(1, "Arun", "Chief Executive Officer");
+
+    // Level 1 Managers
+    Employee* HRManager =
+        new Employee(2, "Priya", "HR Manager");
+
+    Employee* ProjectManager =
+        new Employee(3, "Karthik", "Project Manager");
+
+    Employee* FinanceManager =
+        new Employee(4, "Divya", "Finance Manager");
+
+    Employee* MarketingManager =
+        new Employee(5, "Rahul", "Marketing Manager");
+
+    // Add Managers to CEO
+    CEO->addSubordinate(HRManager);
+    CEO->addSubordinate(ProjectManager);
+    CEO->addSubordinate(FinanceManager);
+    CEO->addSubordinate(MarketingManager);
+
+    // HR Department Employees
+    Employee* HREmp1 =
+        new Employee(6, "Sneha", "HR Executive");
+
+    Employee* HREmp2 =
+        new Employee(7, "Vignesh", "Recruiter");
+
+    HRManager->addSubordinate(HREmp1);
+    HRManager->addSubordinate(HREmp2);
+
+    // Project Department Employees
+    Employee* TeamLead1 =
+        new Employee(8, "Ajith", "Team Leader");
+
+    Employee* TeamLead2 =
+        new Employee(9, "Meena", "Team Leader");
+
+    ProjectManager->addSubordinate(TeamLead1);
+    ProjectManager->addSubordinate(TeamLead2);
+
+    // Developers under Team Lead 1
+    Employee* Dev1 =
+        new Employee(10, "Ravi", "Software Developer");
+
+    Employee* Dev2 =
+        new Employee(11, "Kumar", "Frontend Developer");
+
+    TeamLead1->addSubordinate(Dev1);
+    TeamLead1->addSubordinate(Dev2);
+
+    // Developers under Team Lead 2
+    Employee* Dev3 =
+        new Employee(12, "Anitha", "Backend Developer");
+
+    Employee* Dev4 =
+        new Employee(13, "Surya", "Full Stack Developer");
+
+    TeamLead2->addSubordinate(Dev3);
+    TeamLead2->addSubordinate(Dev4);
+
+    // Finance Department Employees
+    Employee* Accountant1 =
+        new Employee(14, "Lokesh", "Senior Accountant");
+
+    Employee* Accountant2 =
+        new Employee(15, "Keerthi", "Junior Accountant");
+
+    FinanceManager->addSubordinate(Accountant1);
+    FinanceManager->addSubordinate(Accountant2);
+
+    // Marketing Department Employees
+    Employee* MarketingEmp1 =
+        new Employee(16, "Nisha", "Marketing Executive");
+
+    Employee* MarketingEmp2 =
+        new Employee(17, "Harish", "Sales Executive");
+
+    MarketingManager->addSubordinate(MarketingEmp1);
+    MarketingManager->addSubordinate(MarketingEmp2);
+
+    // Display Organization Structure
+    cout << "=========================================\n";
+    cout << "      ORGANIZATION STRUCTURE TREE\n";
+    cout << "=========================================\n\n";
+
+    displayOrganization(CEO);
+
+    // Count Total Employees
+    cout << "\nTotal Number of Employees : ";
+    cout << countEmployees(CEO) << endl;
+
+    // Search Employee
+    string employeeName;
+
+    cout << "\nEnter Employee Name to Search : ";
+    cin >> employeeName;
+
+    searchEmployee(CEO, employeeName);
+
+    return 0;
+}
